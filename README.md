@@ -1,16 +1,23 @@
-# pokedex_app
+# Flutter Pokedex App
 
-A new Flutter project.
+A comprehensive and modern Pokedex app built with Flutter. This app allows users to explore detailed Pokémon data while featuring an intuitive design and innovative features.
 
-## Getting Started
+## Features
 
-This project is a starting point for a Flutter application.
+- **Pokedex**: Browse and search for Pokémon with dynamic filters and sorting.
+- **Detailed Pokémon Info**: View a Pokémon’s stats, abilities, evolution tree, and more.
+- **Gamified Experience**: Enjoy mini-games like "Who's That Pokémon?" and Pokémon trivia.
+- **Multilingual Support**: Switch between multiple languages for a global experience.
+- **Offline Mode**: Access Pokémon data even without an internet connection.
 
-A few resources to get you started if this is your first Flutter project:
+## File Structure
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+```plaintext
+lib/
+├── main.dart                # Entry point for the Flutter app
+├── core/                    # Core functionality and shared resources
+├── features/                # Feature-specific code
+├── localization/            # Language files for multilingual support
+├── services/                # API and storage services
+├── assets/                  # Images, animations, and other resources
+├── test/                    # Unit and widget tests
