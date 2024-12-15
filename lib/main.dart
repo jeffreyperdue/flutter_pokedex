@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'features/pokedex/presentation/pokedex_screen.dart';
 
 void main() {
   runApp(PokedexApp());
@@ -37,7 +38,10 @@ class HomeScreen extends StatelessWidget {
               title: 'Pokédex',
               icon: Icons.search,
               onTap: () {
-                // Navigate to Pokémon List screen
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => PokedexScreen()),
+                );
               },
             ),
             FeatureCard(
@@ -59,34 +63,6 @@ class HomeScreen extends StatelessWidget {
               icon: Icons.camera_alt,
               onTap: () {
                 // Navigate to PokeSnap screen
-              },
-            ),
-            FeatureCard(
-              title: 'Who\'s That Pokémon?',
-              icon: Icons.question_mark,
-              onTap: () {
-                // Navigate to Who's That Pokémon? screen
-              },
-            ),
-            FeatureCard(
-              title: 'Pokémon Trivia',
-              icon: Icons.quiz,
-              onTap: () {
-                // Navigate to Trivia game screen
-              },
-            ),
-            FeatureCard(
-              title: 'Achievements',
-              icon: Icons.emoji_events,
-              onTap: () {
-                // Navigate to Achievements screen
-              },
-            ),
-            FeatureCard(
-              title: 'Profile',
-              icon: Icons.person,
-              onTap: () {
-                // Navigate to Profile screen
               },
             ),
           ],
