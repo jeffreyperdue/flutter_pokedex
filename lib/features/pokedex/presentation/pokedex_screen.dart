@@ -1,66 +1,43 @@
 import 'package:flutter/material.dart';
-import 'package:pokedex_app/features/pokedex/data/pokemon_service.dart';
-import 'package:pokedex_app/features/pokedex/data/pokemon_model.dart';
+import '../data/pokemon_model.dart';
+import '../data/pokemon_service.dart';
 import 'pokemon_detail_screen.dart';
 
-class PokedexScreen extends StatefulWidget {
-  @override
-  _PokedexScreenState createState() => _PokedexScreenState();
-}
-
-class _PokedexScreenState extends State<PokedexScreen> {
-  List<PokemonModel> _allPokemon = [];
-  bool _isLoading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadPokemon();
-  }
-
-  Future<void> _loadPokemon() async {
-    try {
-      final pokemonList = await PokemonService.getAllPokemon();
-      setState(() {
-        _allPokemon = pokemonList;
-        _isLoading = false;
-      });
-    } catch (e) {
-      setState(() {
-        _isLoading = false;
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to load Pokémon: $e')),
-      );
-    }
-  }
-
-  void _navigateToDetailScreen(BuildContext context, PokemonModel pokemon) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => PokemonDetailScreen(pokemon: pokemon),
-      ),
-    );
-  }
+class PokedexScreen extends StatelessWidget {
+  const PokedexScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Pokédex'),
-      ),
-      body: _isLoading
-          ? Center(child: CircularProgressIndicator())
-          : ListView.builder(
-        itemCount: _allPokemon.length,
-        itemBuilder: (context, index) {
-          final pokemon = _allPokemon[index];
-          return ListTile(
-            leading: Image.network(pokemon.imageUrl),
-            title: Text(pokemon.name),
-            subtitle: Text(pokemon.type),
-            onTap: () => _navigateToDetailScreen(context, pokemon),
+      appBar: AppBar(title: const Text('Pokedex')),
+      body: FutureBuilder<List<PokemonModel>>(
+        future: PokemonService().getAllPokemon(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          }
+
+          final pokemonList = snapshot.data!;
+
+          return ListView.builder(
+            itemCount: pokemonList.length,
+            itemBuilder: (context, index) {
+              final pokemon = pokemonList[index];
+              return ListTile(
+                leading: Image.network(pokemon.imageUrl),
+                title: Text(pokemon.name),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => PokemonDetailScreen(pokemonId: pokemon.id),
+                    ),
+                  );
+                },
+              );
+            },
           );
         },
       ),
