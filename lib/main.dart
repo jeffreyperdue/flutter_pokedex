@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'features/pokedex/presentation/pokedex_screen.dart';
+import 'features/pokesnap/pokesnap_screen.dart';
 
 void main() {
   runApp(PokedexApp());
@@ -62,7 +63,10 @@ class HomeScreen extends StatelessWidget {
               title: 'PokéSnap',
               icon: Icons.camera_alt,
               onTap: () {
-                // Navigate to PokeSnap screen
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => PokeSnapScreen()),
+                );
               },
             ),
           ],
