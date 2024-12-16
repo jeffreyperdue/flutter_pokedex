@@ -24,9 +24,15 @@ class PokemonService {
       // Extract stats
       final stats = (pokemonData['stats'] as List)
           .map((stat) => Stat(
-          name: stat['stat']['name'],
-          value: stat['base_stat']))
+                name: stat['stat']['name'],
+                value: stat['base_stat'],
+              ))
           .toList();
+
+      // Extract and clean description
+      final rawDescription = speciesData['flavor_text_entries']
+          .firstWhere((entry) => entry['language']['name'] == 'en')['flavor_text'];
+      final cleanedDescription = _cleanDescription(rawDescription);
 
       // Extract evolutions
       final evolutionChainUrl = speciesData['evolution_chain']['url'];
@@ -39,8 +45,7 @@ class PokemonService {
         name: pokemonData['name'],
         imageUrl: pokemonData['sprites']['front_default'],
         types: types,
-        description: speciesData['flavor_text_entries']
-            .firstWhere((entry) => entry['language']['name'] == 'en')['flavor_text'],
+        description: cleanedDescription,
         height: pokemonData['height'] / 10,
         weight: pokemonData['weight'] / 10,
         malePercentage: speciesData['gender_rate'] != -1
@@ -72,7 +77,8 @@ class PokemonService {
         return PokemonModel(
           id: id,
           name: pokemon['name'],
-          imageUrl: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/$id.png',
+          imageUrl:
+              'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/$id.png',
         );
       }).toList();
     } else {
@@ -81,25 +87,55 @@ class PokemonService {
   }
 
   /// Parse the evolution chain data recursively
-  List<Evolution> _parseEvolutionChain(dynamic data) {
-    final List<Evolution> evolutions = [];
-    var current = data['chain'];
+List<Evolution> _parseEvolutionChain(dynamic data) {
+  final List<Evolution> evolutions = [];
 
-    while (current != null) {
-      final species = current['species'];
-      final evolvesTo = current['evolves_to'];
-      evolutions.add(Evolution(
-        name: species['name'],
-        imageUrl:
-        'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${_getPokemonIdFromUrl(species['url'])}.png',
-        method: evolvesTo.isNotEmpty
-            ? evolvesTo[0]['evolution_details'][0]['trigger']['name']
-            : 'Base',
-      ));
-      current = evolvesTo.isNotEmpty ? evolvesTo[0] : null;
+  void parseEvolution(dynamic chain) {
+    final species = chain['species'];
+    final evolutionDetails = chain['evolution_details'];
+    
+    // Determine the evolution method
+    String method = 'base';
+    int? level;
+    String? item;
+
+    if (evolutionDetails.isNotEmpty) {
+      final details = evolutionDetails[0];
+      if (details['trigger']['name'] == 'level-up' && details['min_level'] != null) {
+        method = 'level-up';
+        level = details['min_level'];
+      } else if (details['trigger']['name'] == 'use-item' && details['item'] != null) {
+        method = 'use-item';
+        item = details['item']['name'];
+      } else if (details['trigger']['name'] == 'trade') {
+        method = 'trade';
+        item = details['held_item']?['name']; // Optional trade with an item
+      }
     }
 
-    return evolutions;
+    evolutions.add(Evolution(
+      name: species['name'],
+      imageUrl:
+          'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${_getPokemonIdFromUrl(species['url'])}.png',
+      method: method,
+      level: level,
+      item: item,
+    ));
+
+    // Recursively parse next evolutions
+    for (var next in chain['evolves_to']) {
+      parseEvolution(next);
+    }
+  }
+
+  parseEvolution(data['chain']); // Start parsing from the root
+  return evolutions;
+}
+
+
+  /// Helper function to clean up description text
+  String _cleanDescription(String rawText) {
+    return rawText.replaceAll('\n', ' ').replaceAll('\f', ' ').trim();
   }
 
   /// Helper function to extract Pokémon ID from the URL

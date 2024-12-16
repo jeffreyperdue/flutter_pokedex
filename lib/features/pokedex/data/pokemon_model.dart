@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class PokemonModel {
   final int id;
   final String name;
@@ -50,6 +52,35 @@ class Evolution {
   final String name;
   final String imageUrl;
   final String method;
+  final int? level; // Optional for level-based evolutions
+  final String? item; // Optional for item-based evolutions
 
-  Evolution({required this.name, required this.imageUrl, required this.method});
+  Evolution({
+    required this.name,
+    required this.imageUrl,
+    required this.method,
+    this.level,
+    this.item,
+  });
 }
+
+const Map<String, Color> typeColors = {
+  'normal': Colors.grey,
+  'fire': Colors.deepOrangeAccent,
+  'water': Colors.blueAccent,
+  'electric': Colors.amberAccent,
+  'grass': Colors.green,
+  'ice': Colors.lightBlueAccent,
+  'fighting': Colors.redAccent,
+  'poison': Colors.purpleAccent,
+  'ground': Colors.orangeAccent,
+  'flying': Colors.lightBlue,
+  'psychic': Colors.pinkAccent,
+  'bug': Colors.lime,
+  'rock': Color.fromARGB(255, 65, 63, 63),
+  'ghost': Colors.deepPurple,
+  'dragon': Colors.indigo,
+  'dark': Colors.black87,
+  'steel': Colors.blueGrey,
+  'fairy': Colors.pink,
+};
