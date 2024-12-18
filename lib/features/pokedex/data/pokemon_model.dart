@@ -4,12 +4,25 @@ class PokemonModel {
   final int id;
   final String name;
   final String imageUrl;
+  final List<String> types; // Add types
 
   PokemonModel({
     required this.id,
     required this.name,
     required this.imageUrl,
+    required this.types,
   });
+
+  factory PokemonModel.fromJson(Map<String, dynamic> json) {
+    return PokemonModel(
+      id: json['id'] ?? 0,
+      name: json['name'] ?? 'Unknown',
+      imageUrl: json['sprites']['front_default'] ?? '',
+      types: List<String>.from(
+        json['types']?.map((t) => t['type']['name']) ?? [],
+      ),
+    );
+  }
 }
 
 
@@ -77,7 +90,7 @@ const Map<String, Color> typeColors = {
   'flying': Colors.lightBlue,
   'psychic': Colors.pinkAccent,
   'bug': Colors.lime,
-  'rock': Color.fromARGB(255, 65, 63, 63),
+  'rock': Colors.brown, 
   'ghost': Colors.deepPurple,
   'dragon': Colors.indigo,
   'dark': Colors.black87,
