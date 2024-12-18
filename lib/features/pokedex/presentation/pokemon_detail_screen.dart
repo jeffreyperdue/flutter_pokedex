@@ -58,41 +58,79 @@ class PokemonDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader(BuildContext context, PokemonDetail pokemon) {
-    final Color primaryColor = typeColors[pokemon.types.first] ?? Colors.grey;
+Widget _buildHeader(BuildContext context, PokemonDetail pokemon) {
+  final Color primaryColor = typeColors[pokemon.types.first] ?? Colors.grey;
 
-    return SliverAppBar(
-      expandedHeight: 300,
-      pinned: true,
-      flexibleSpace: FlexibleSpaceBar(
-        title: Text(
-          '${pokemon.name.toUpperCase()} - #${pokemon.id.toString().padLeft(3, '0')}',
-          style: const TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
-        ),
-        background: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [primaryColor, primaryColor.withOpacity(0.6)],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-            ),
-          ),
-          child: Center(
-            child: Image.network(
-              pokemon.imageUrl,
-              width: 150,
-              height: 150,
-              fit: BoxFit.contain,
-            ),
-          ),
+  return SliverAppBar(
+    expandedHeight: 350, // Increased height to accommodate type buttons
+    pinned: true,
+    flexibleSpace: FlexibleSpaceBar(
+      title: Text(
+        '${pokemon.name.toUpperCase()} - #${pokemon.id.toString().padLeft(3, '0')}',
+        style: const TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+          fontSize: 18,
         ),
       ),
-    );
-  }
+      background: Stack(
+        fit: StackFit.expand,
+        children: [
+          // Gradient Background
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  primaryColor,
+                  primaryColor.withOpacity(0.6), // Transparent version
+                ],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              ),
+            ),
+          ),
+          // Pokémon Image
+          Positioned(
+            bottom: 80,
+            left: 0,
+            right: 0,
+            child: Center(
+              child: Image.network(
+                pokemon.imageUrl,
+                width: 150,
+                height: 150,
+                fit: BoxFit.contain,
+              ),
+            ),
+          ),
+          // Type Buttons
+          Positioned(
+            bottom: 20,
+            left: 0,
+            right: 0,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: pokemon.types.map((type) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Chip(
+                    label: Text(
+                      type.toUpperCase(),
+                      style: const TextStyle(color: Colors.white, fontSize: 14),
+                    ),
+                    backgroundColor: typeColors[type] ?? Colors.grey,
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
 
   Widget _buildAboutTab(PokemonDetail pokemon) {
     return ListView(

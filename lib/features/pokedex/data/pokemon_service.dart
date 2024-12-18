@@ -61,8 +61,10 @@ class PokemonService {
   }
 
   /// Fetch a list of all Pokémon with their basic data
+/// Fetch a list of all Pokémon from Generations 1, 2, and 3
 Future<List<PokemonModel>> getAllPokemon() async {
-  const String url = '$baseUrl/pokemon?limit=151';
+  const int totalPokemon = 386; // Generations 1–3
+  const String url = '$baseUrl/pokemon?limit=$totalPokemon';
 
   final response = await http.get(Uri.parse(url));
 
@@ -74,25 +76,35 @@ Future<List<PokemonModel>> getAllPokemon() async {
       final urlSegments = (pokemon['url'] as String).split('/');
       final id = int.parse(urlSegments[urlSegments.length - 2]);
 
-      // Fetch full details to include types
+      // Fetch full details to include types and images
       final detailResponse =
           await http.get(Uri.parse('$baseUrl/pokemon/$id'));
-      final detailData = json.decode(detailResponse.body);
+      if (detailResponse.statusCode == 200) {
+        final detailData = json.decode(detailResponse.body);
 
-      return PokemonModel(
-        id: id,
-        name: pokemon['name'],
-        imageUrl:
-            'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/$id.png',
-        types: List<String>.from(
-          detailData['types']?.map((t) => t['type']['name']) ?? [],
-        ),
-      );
+        return PokemonModel(
+          id: id,
+          name: _capitalize(pokemon['name']),
+          imageUrl: detailData['sprites']['front_default'] ??
+              'https://via.placeholder.com/96', // Fallback image
+          types: List<String>.from(
+            detailData['types']?.map((t) => t['type']['name']) ?? [],
+          ),
+        );
+      } else {
+        throw Exception('Failed to load details for Pokémon ID: $id');
+      }
     }));
   } else {
     throw Exception('Failed to load Pokémon list');
   }
 }
+
+/// Helper to capitalize the Pokémon name
+String _capitalize(String name) {
+  return name[0].toUpperCase() + name.substring(1);
+}
+
 
   /// Parse the evolution chain data recursively
 List<Evolution> _parseEvolutionChain(dynamic data) {

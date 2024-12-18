@@ -7,9 +7,9 @@ class PokedexScreen extends StatelessWidget {
   const PokedexScreen({Key? key}) : super(key: key);
 
   // Map for Type Colors
-Color _getTypeColor(String type) {
-  return typeColors[type.toLowerCase()] ?? Colors.grey.shade200;
-}
+  Color _getTypeColor(String type) {
+    return typeColors[type.toLowerCase()] ?? Colors.grey.shade200;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,22 +38,6 @@ Color _getTypeColor(String type) {
           return SingleChildScrollView(
             child: Column(
               children: [
-                // Search Bar
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: 'What Pokémon are you looking for?',
-                      prefixIcon: const Icon(Icons.search, color: Colors.grey),
-                      filled: true,
-                      fillColor: Colors.grey.shade100,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: BorderSide.none,
-                      ),
-                    ),
-                  ),
-                ),
                 // Pokémon Cards
                 ListView.builder(
                   shrinkWrap: true,
@@ -76,8 +60,8 @@ Color _getTypeColor(String type) {
                             horizontal: 16, vertical: 8),
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: _getTypeColor(pokemon.types.first),
                           borderRadius: BorderRadius.circular(12),
+                          gradient: _buildGradient(pokemon.types),
                         ),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -108,18 +92,17 @@ Color _getTypeColor(String type) {
                                     style: const TextStyle(
                                       fontSize: 20,
                                       fontWeight: FontWeight.w600,
-                                      color: Colors.black,
+                                      color: Colors.white,
                                     ),
                                   ),
                                   Row(
                                     children: pokemon.types.map((type) {
                                       return Container(
-                                        margin:
-                                            const EdgeInsets.only(right: 4),
+                                        margin: const EdgeInsets.only(right: 4),
                                         padding: const EdgeInsets.symmetric(
                                             horizontal: 8, vertical: 4),
                                         decoration: BoxDecoration(
-                                          color: Colors.white.withOpacity(0.3),
+                                          color: _getTypeColor(type),
                                           borderRadius:
                                               BorderRadius.circular(20),
                                         ),
@@ -148,6 +131,20 @@ Color _getTypeColor(String type) {
           );
         },
       ),
+    );
+  }
+
+  /// Helper Method: Build Gradient for Dual Types
+  LinearGradient _buildGradient(List<String> types) {
+    Color primaryColor = typeColors[types.first.toLowerCase()] ?? Colors.grey;
+    Color secondaryColor = types.length > 1
+        ? typeColors[types[1].toLowerCase()] ?? Colors.grey
+        : primaryColor;
+
+    return LinearGradient(
+      colors: [primaryColor, secondaryColor],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
     );
   }
 }
