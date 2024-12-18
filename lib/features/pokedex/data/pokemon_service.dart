@@ -63,7 +63,7 @@ class PokemonService {
   /// Fetch a list of all Pokémon with their basic data
 /// Fetch a list of all Pokémon from Generations 1, 2, and 3
 Future<List<PokemonModel>> getAllPokemon() async {
-  const int totalPokemon = 386; // Generations 1–3
+  const int totalPokemon = 1025;
   const String url = '$baseUrl/pokemon?limit=$totalPokemon';
 
   final response = await http.get(Uri.parse(url));

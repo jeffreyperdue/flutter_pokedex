@@ -58,6 +58,41 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
+  /// Build Header with Custom Font
+  Widget _buildHeader() {
+    return Center(
+      child: Column(
+        children: [
+          Text(
+            "My Dex",
+            style: TextStyle(
+              fontSize: 36,
+              fontFamily: 'MyDex', // Apply custom font here
+              color: Color(0xFFFFCB05),
+              shadows: [
+                Shadow(
+                  blurRadius: 1.0,
+                  color: Color(0xFF2A75BB),
+                  offset: Offset(3.0, 3.0),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            "Explore the Pokémon World!",
+            style: TextStyle(
+              fontSize: 18,
+              color: Colors.white70,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+
   /// Build Header with a Bold, Fun Tagline
   Widget _buildHeader() {
     return Center(
@@ -177,7 +212,6 @@ class HomeScreen extends StatelessWidget {
       ),
     );
   }
-}
 
 /// Placeholder Screen for Navigation
 class PlaceholderScreen extends StatelessWidget {
